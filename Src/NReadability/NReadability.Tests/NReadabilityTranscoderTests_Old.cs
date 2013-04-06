@@ -27,9 +27,18 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using System.Text;
+using NReadability;
 
 namespace NReadability.Tests
 {
+    public static class Hack
+    {
+        public static bool IsCloseToZero(this float x)
+        {
+            return Math.Abs(x) < float.Epsilon;
+        }
+    }
+
   // TODO IMM HI: remove when we get rid of obsolete NReadabilityTranscoder.Transcode(...) methods
   [TestFixture]
   public class NReadabilityTranscoderTests_Old

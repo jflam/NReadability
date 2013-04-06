@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AA0CDD52-FC66-48BC-A2E5-35DA17ED8F8F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NReadability.Portable</RootNamespace>
+    <AssemblyName>NReadability.Portable</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile154</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <EmbeddedResource Include="Resources\readability.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AttributeTransformationInput.cs" />
+    <Compile Include="AttributeTransformationResult.cs" />
+    <Compile Include="ChildNodesTraverser.cs" />
+    <Compile Include="Consts.cs" />
+    <Compile Include="DomExtensions.cs" />
+    <Compile Include="DomSerializationParams.cs" />
+    <Compile Include="ElementsTraverser.cs" />
+    <Compile Include="EncodedStringWriter.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="HtmlUtils.cs" />
+    <Compile Include="InternalErrorException.cs" />
+    <Compile Include="IUrlFetcher.cs" />
+    <Compile Include="NReadabilityTranscoder.cs" />
+    <Compile Include="NReadabilityWebTranscoder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SgmlDomBuilder.cs" />
+    <Compile Include="SgmlDomSerializer.cs" />
+    <Compile Include="TranscodingInput.cs" />
+    <Compile Include="TranscodingResult.cs" />
+    <Compile Include="UtilityExtensions.cs" />
+    <Compile Include="WebTranscodingInput.cs" />
+    <Compile Include="WebTranscodingResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\HtmlParserSharp\HtmlParserSharp.Portable\HtmlParserSharp.Portable.csproj">
+      <Project>{b27a7987-002e-4f27-92d6-e95872b45bb6}</Project>
+      <Name>HtmlParserSharp.Portable</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime">
+      <HintPath>..\packages\Microsoft.Bcl.1.0.16-rc\lib\portable-net40+sl4+win8+wp8\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.1.0.16-rc\lib\portable-net40+sl4+win8+wp8\System.Threading.Tasks.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.0-rc\tools\Microsoft.Bcl.Build.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
