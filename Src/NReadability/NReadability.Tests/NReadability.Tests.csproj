@@ -240,6 +240,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\HtmlParserSharp\HtmlParserSharp.Portable\HtmlParserSharp.Portable.csproj">
+      <Project>{B27A7987-002E-4F27-92D6-E95872B45BB6}</Project>
+      <Name>HtmlParserSharp.Portable</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NReadability.Portable\NReadability.Portable.csproj">
       <Project>{aa0cdd52-fc66-48bc-a2e5-35da17ed8f8f}</Project>
       <Name>NReadability.Portable</Name>

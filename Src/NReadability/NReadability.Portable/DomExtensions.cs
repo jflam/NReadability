@@ -20,14 +20,149 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using HtmlParserSharp.Portable.Common;
+using HtmlParserSharp.Portable;
 
 namespace NReadability
 {
+    // This is a custom XmlWriter that forces writing of full end tags for XML
+    // elements. This is required because sometimes XmlWriters will emit elements
+    // using the auto-closing syntax (e.g. <foo />) when what you really need for
+    // conformant HTML 5 is the explicit end-tag (e.g. <foo></foo>).
+    public class FullEndTagXmlWriter : XmlWriter
+    {
+        private readonly XmlWriter _inner;
+
+        public FullEndTagXmlWriter(XmlWriter inner)
+        {
+            this._inner = inner;
+        }
+
+        public override void WriteStartDocument()
+        {
+            _inner.WriteStartDocument();
+        }
+
+        public override void WriteStartDocument(bool standalone)
+        {
+            _inner.WriteStartDocument(standalone);
+        }
+
+        public override void WriteEndDocument()
+        {
+            _inner.WriteEndDocument();
+        }
+
+        public override void WriteDocType(string name, string pubid, string sysid, string subset)
+        {
+            _inner.WriteDocType(name, pubid, sysid, subset);
+        }
+
+        public override void WriteStartElement(string prefix, string localName, string ns)
+        {
+            _inner.WriteStartElement(prefix, localName, ns);
+        }
+
+        public override void WriteEndElement()
+        {
+            _inner.WriteFullEndElement();
+        }
+
+        public override void WriteFullEndElement()
+        {
+            _inner.WriteFullEndElement();
+        }
+
+        public override void WriteStartAttribute(string prefix, string localName, string ns)
+        {
+            _inner.WriteStartAttribute(prefix, localName, ns);
+        }
+
+        public override void WriteEndAttribute()
+        {
+            _inner.WriteEndAttribute();
+        }
+
+        public override void WriteCData(string text)
+        {
+            _inner.WriteCData(text);
+        }
+
+        public override void WriteComment(string text)
+        {
+            _inner.WriteComment(text);
+        }
+
+        public override void WriteProcessingInstruction(string name, string text)
+        {
+            _inner.WriteProcessingInstruction(name, text);
+        }
+
+        public override void WriteEntityRef(string name)
+        {
+            _inner.WriteEntityRef(name);
+        }
+
+        public override void WriteCharEntity(char ch)
+        {
+            _inner.WriteCharEntity(ch);
+        }
+
+        public override void WriteWhitespace(string ws)
+        {
+            _inner.WriteWhitespace(ws);
+        }
+
+        public override void WriteString(string text)
+        {
+            _inner.WriteString(text);
+        }
+
+        public override void WriteSurrogateCharEntity(char lowChar, char highChar)
+        {
+            _inner.WriteSurrogateCharEntity(lowChar, highChar);
+        }
+
+        public override void WriteChars(char[] buffer, int index, int count)
+        {
+            _inner.WriteChars(buffer, index, count);
+        }
+
+        public override void WriteRaw(char[] buffer, int index, int count)
+        {
+            _inner.WriteRaw(buffer, index, count);
+        }
+
+        public override void WriteRaw(string data)
+        {
+            _inner.WriteRaw(data);
+        }
+
+        public override void WriteBase64(byte[] buffer, int index, int count)
+        {
+            _inner.WriteBase64(buffer, index, count);
+        }
+
+        public override void Flush()
+        {
+            _inner.Flush();
+        }
+
+        public override string LookupPrefix(string ns)
+        {
+            return _inner.LookupPrefix(ns);
+        }
+
+        public override WriteState WriteState
+        {
+            get { return _inner.WriteState; }
+        }
+    }
+
   public static class DomExtensions
   {
     #region XDocument extensions
@@ -222,52 +357,49 @@ namespace NReadability
 
     public static string GetInnerHtml(this XContainer container)
     {
-      if (container == null)
-      {
-        throw new ArgumentNullException("container");
-      }
+        if (container == null)
+        {
+            throw new ArgumentNullException("container");
+        }
 
-      var resultSb = new StringBuilder();
+        var sb = new StringBuilder();
+        using (var writer = new FullEndTagXmlWriter(
+            XmlWriter.Create(sb,
+                             new XmlWriterSettings()
+                             {
+                                 ConformanceLevel = ConformanceLevel.Fragment
+                             })))
+        {
+            foreach (var childNode in container.Nodes())
+            {
+                childNode.WriteTo(writer);
+            }
 
-      foreach (var childNode in container.Nodes())
-      {
-        resultSb.Append(childNode.ToString(SaveOptions.DisableFormatting));
-      }
-
-      return resultSb.ToString();
+            writer.Flush();
+            return sb.ToString();
+        }
     }
 
     public static void SetInnerHtml(this XElement element, string html)
     {
-      if (element == null)
-      {
-        throw new ArgumentNullException("element");
-      }
+        if (element == null)
+        {
+            throw new ArgumentNullException("element");
+        }
 
-      if (html == null)
-      {
-        throw new ArgumentNullException("html");
-      }
+        if (html == null)
+        {
+            throw new ArgumentNullException("html");
+        }
 
-      element.RemoveAll();
+        element.RemoveAll();
 
-      var tmpElement = new SgmlDomBuilder().BuildDocument(html);
-
-      if (tmpElement.Root == null)
-      {
-        return;
-      }
-
-        // Make sure we find the <body> element
-        var body =
-            tmpElement.DescendantNodes().First(x => x.NodeType == XmlNodeType.Element && ((XElement) x).Name == "body")
-            as XElement;
-
-      //foreach (var node in tmpElement.Root.Nodes())
-      foreach (var node in body.Nodes())
-      {
-        element.Add(node);
-      }
+        var parser = new SimpleHtmlParser();
+        var nodes = parser.ParseFragment(new StringReader(html), String.Empty);
+        foreach (var node in nodes)
+        {
+            element.Add(node);
+        }
     }
 
     #endregion
