@@ -999,11 +999,7 @@ namespace NReadability
 
             if ("div".Equals(elementName, StringComparison.OrdinalIgnoreCase))
             {
-              XNode childNode = element.Nodes().SingleOrNone();
-
-              if (childNode != null)
-              {
-                XElement childElement = childNode as XElement;
+              XElement childElement = (XElement)element.Nodes().SingleOrNone();
 
                 if (childElement != null && "p".Equals(GetElementName(childElement), StringComparison.OrdinalIgnoreCase))
                 {
@@ -1016,7 +1012,6 @@ namespace NReadability
                     element.Remove();
                   }
                 }
-              }
             }
           }).Traverse(rootElement);
     }

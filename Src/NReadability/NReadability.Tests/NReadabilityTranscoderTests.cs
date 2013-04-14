@@ -110,10 +110,10 @@ namespace NReadability.Tests
         "    Some paragraph." + "\r\n" +
         "  </p>";
 
-      const string content =
-        "<div>" + "\r\n" +
-        "  " + paragraph + "\r\n" +
-        "</div>" + "\r\n";
+        const string content =
+            "<div>" + "\r\n" +
+            "  " + paragraph + "\r\n" +
+            "</div>";
 
       var document = _sgmlDomBuilder.BuildDocument(content);
 
@@ -1013,11 +1013,7 @@ namespace NReadability.Tests
         _sgmlDomSerializer.SerializeDocument(
           _sgmlDomBuilder.BuildDocument(expectedContent));
 
-      string serializedActualContent =
-        _sgmlDomSerializer.SerializeDocument(
-          _sgmlDomBuilder.BuildDocument(actualContent));
-
-      Assert.AreEqual(serializedExpectedContent, serializedActualContent);
+      Assert.AreEqual(serializedExpectedContent, actualContent);
     }
 
     private static void AssertFloatsAreEqual(float expected, float actual)
