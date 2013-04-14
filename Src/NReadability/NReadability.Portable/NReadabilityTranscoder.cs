@@ -112,7 +112,7 @@ namespace NReadability
     private static readonly Regex _NormalizeSpacesRegex = new Regex("\\s{2,}");
     private static readonly Regex _KillBreaksRegex = new Regex("(<br\\s*\\/?>(\\s|&nbsp;?)*){1,}");
     private static readonly Regex _VideoRegex = new Regex("http:\\/\\/(www\\.)?(youtube|vimeo)\\.com", RegexOptions.IgnoreCase);
-    private static readonly Regex _ReplaceDoubleBrsRegex = new Regex("(<br[^>]*>[ \\n\\r\\t]*){2,}", RegexOptions.IgnoreCase);
+    private static readonly Regex _ReplaceDoubleBrsRegex = new Regex("(<br[^>]*>[ \\n\\r\\t]*</br[^>]*>){2,}", RegexOptions.IgnoreCase);
     private static readonly Regex _ReplaceFontsRegex = new Regex("<(\\/?)font[^>]*>", RegexOptions.IgnoreCase);
     private static readonly Regex _ArticleTitleDashRegex1 = new Regex(" [\\|\\-] ");
     private static readonly Regex _ArticleTitleDashRegex2 = new Regex("(.*)[\\|\\-] .*");
@@ -761,7 +761,7 @@ namespace NReadability
       RemoveElements(elementsToRemove);
 
       /* Turn all double br's into p's and all font's into span's. */
-      // TODO: optimize?
+      // TODO: it is completely incorrect to do this with regex's. Need to write code for each one of these cases
       string bodyInnerHtml = documentBody.GetInnerHtml();
 
       bodyInnerHtml = _ReplaceDoubleBrsRegex.Replace(bodyInnerHtml, "</p><p>");

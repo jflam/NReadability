@@ -997,14 +997,23 @@ namespace NReadability.Tests
 
       var document = new SgmlDomBuilder().BuildDocument(content);
 
-      Assert.AreEqual(
-        0,
-        (from node in document.DescendantNodes()
-         let name = node is XElement ? ((XElement)node).Name.LocalName : ""
-         where !"html".Equals(name, StringComparison.OrdinalIgnoreCase)
-            && !"head".Equals(name, StringComparison.OrdinalIgnoreCase)
-            && !"meta".Equals(name, StringComparison.OrdinalIgnoreCase)
-         select node).Count());
+      int count = 0;
+      foreach (var node in document.DescendantNodes())
+      {
+          var element = node as XElement;
+          if (element != null)
+          {
+              var name = element.Name.LocalName;
+              if (!"html".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"head".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"meta".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"body".Equals(name, StringComparison.OrdinalIgnoreCase))
+              {
+                  count++;
+              }
+          }
+      }
+      Assert.AreEqual(0, count);
     }
 
     private static void AssertHtmlContentsAreEqual(string expectedContent, string actualContent)

@@ -122,7 +122,7 @@ namespace NReadability.Tests
       const string content =
         "<div>" + "\r\n" +
         "  " + paragraph + "\r\n" +
-        "</div>" + "\r\n";
+        "</div>";
 
       var document = _sgmlDomBuilder.BuildDocument(content);
 
@@ -840,14 +840,23 @@ namespace NReadability.Tests
 
       var document = new SgmlDomBuilder().BuildDocument(content);
 
-      Assert.AreEqual(
-        0,
-        (from node in document.DescendantNodes()
-        let name = node is XElement && ((XElement)node).Name != null ? ((XElement)node).Name.LocalName : ""
-        where !"html".Equals(name, StringComparison.OrdinalIgnoreCase)
-           && !"head".Equals(name, StringComparison.OrdinalIgnoreCase)
-           && !"meta".Equals(name, StringComparison.OrdinalIgnoreCase)
-        select node).Count());
+      int count = 0;
+      foreach (var node in document.DescendantNodes())
+      {
+          var element = node as XElement;
+          if (element != null)
+          {
+              var name = element.Name.LocalName;
+              if (!"html".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"head".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"meta".Equals(name, StringComparison.OrdinalIgnoreCase)
+                  && !"body".Equals(name, StringComparison.OrdinalIgnoreCase))
+              {
+                  count++;
+              }
+          }
+      }
+      Assert.AreEqual(0, count);
     }
 
     private static void AssertHtmlContentsAreEqual(string expectedContent, string actualContent)
@@ -856,11 +865,7 @@ namespace NReadability.Tests
         _sgmlDomSerializer.SerializeDocument(
           _sgmlDomBuilder.BuildDocument(expectedContent));
       
-      string serializedActualContent =
-        _sgmlDomSerializer.SerializeDocument(
-          _sgmlDomBuilder.BuildDocument(actualContent));
-
-      Assert.AreEqual(serializedExpectedContent, serializedActualContent);
+      Assert.AreEqual(serializedExpectedContent, actualContent);
     }
 
     private static void AssertFloatsAreEqual(float expected, float actual)
